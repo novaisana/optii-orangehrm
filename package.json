@@ -1,0 +1,22 @@
+{
+  "name": "optii-orangehrm",
+  "version": "1.0.0",
+  "description": "Orange HR optii challenge",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/novaisana/optii-orangehrm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/novaisana/optii-orangehrm/issues"
+  },
+  "homepage": "https://github.com/novaisana/optii-orangehrm#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^25.2.0"
+  }
+}

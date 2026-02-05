@@ -1,0 +1,26 @@
+import { Page } from '@playwright/test';
+
+
+export class LoginLocators {
+  constructor(private page: Page) {}
+
+  get usernameInput() {
+    return this.page.getByPlaceholder('Username');
+  }
+
+  get passwordInput() {
+    return this.page.getByPlaceholder('Password');
+  }
+
+  get loginButton() {
+    return this.page.getByRole('button', { name: 'Login' });
+  }
+
+  get errorMessage() {
+    return this.page.locator('.oxd-alert-content-text');
+  }
+
+  get loginForm() {
+    return this.page.locator('form');
+  }
+}

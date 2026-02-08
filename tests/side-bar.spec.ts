@@ -1,4 +1,5 @@
-import { test, expect, sidebarLinksTestData, sidebarSearchTestData } from '../fixtures/sidebar.fixture';
+import { test, sidebarSearchTestData } from '../fixtures/login.fixture';
+import { sidebarUrlsLinksTestData } from '../enums/side-bar.enum';
 
 test.describe('Feature: Sidebar Navigation', { tag: ['@smoke', '@regression', '@sidebar'] }, () => {
 
@@ -7,7 +8,7 @@ test.describe('Feature: Sidebar Navigation', { tag: ['@smoke', '@regression', '@
       await sidebarPage.verifySidebarIsVisible();
     });
 
-    for (const { link_name, expected_page } of sidebarLinksTestData) {
+    for (const { link_name, expected_page } of sidebarUrlsLinksTestData) {
       test(`Navigate to "${link_name}" and verify "${expected_page}" page loads correctly`, async ({
         sidebarPage
       }) => {

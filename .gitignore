@@ -1,5 +1,6 @@
-##skills
+##local settings
 .claude/
+.vscode/
 
 # Playwright
 node_modules/
@@ -9,5 +10,7 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
-##scenarios not ready
-/scenarios.md
+##allura
+*.log
+*.tmp
+allura-results/

@@ -1,29 +1,18 @@
 import { Page, expect } from '@playwright/test';
-import { SidebarLocators } from '../locators/sidebar.locators';
+import { SidebarLocators } from '../locators/side-bar.locators';
 import { testData } from '../fixtures/login.fixture';
-
-// Map of link names to their expected page headings/titles and URL patterns
-// useUrlVerification: true for pages where heading locators are ambiguous
-const linkToExpectedPage: Record<string, { heading: string; urlPattern: RegExp; exactMatch?: boolean; useUrlVerification?: boolean }> = {
-  'Admin': { heading: 'System Users', urlPattern: /.*\/admin\/viewSystemUsers$/ },
-  'PIM': { heading: 'Employee Information', urlPattern: /.*\/pim\/viewEmployeeList$/ },
-  'Leave': { heading: 'Leave List', urlPattern: /.*\/leave\/viewLeaveList$/ },
-  'Time': { heading: 'Select Employee', urlPattern: /.*\/time\/viewEmployeeTimesheet$/ },
-  'Recruitment': { heading: 'Candidates', urlPattern: /.*\/recruitment\/viewCandidates$/ },
-  'My Info': { heading: 'Personal Details', urlPattern: /.*\/pim\/viewPersonalDetails\/empNumber\/\d+$/ },
-  'Performance': { heading: 'Manage Reviews', urlPattern: /.*\/performance\/searchEvaluatePerformanceReview$/ },
-  'Dashboard': { heading: 'Dashboard', urlPattern: /.*\/dashboard\/index$/, exactMatch: true },
-  'Directory': { heading: 'Directory', urlPattern: /.*\/directory\/viewDirectory$/, useUrlVerification: true },
-  'Maintenance': { heading: 'Purge Records', urlPattern: /.*\/maintenance\/purgeEmployee$/ },
-  'Claim': { heading: 'Claim', urlPattern: /.*\/claim\/viewAssignClaim$/, useUrlVerification: true },
-  'Buzz': { heading: 'Buzz', urlPattern: /.*\/buzz\/viewBuzz$/, exactMatch: true }
-};
+import { pagesUrlPath } from '../enums/side-bar.enum';
 
 export class SidebarPage {
   private locators: SidebarLocators;
+  private expectedLinks: string[];
 
   constructor(private page: Page) {
     this.locators = new SidebarLocators(page);
+    this.expectedLinks = ['Admin', 'PIM', 'Leave', 'Time', 'Recruitment',
+                          'My Info', 'Performance', 'Dashboard', 'Directory',
+                          'Maintenance', 'Claim', 'Buzz'];
+
   }
 
   async verifySidebarIsVisible(): Promise<void> {
@@ -39,20 +28,23 @@ export class SidebarPage {
 
   async verifyPageLoadedCorrectly(expectedPage: string): Promise<void> {
 
-    const pageInfo = linkToExpectedPage[expectedPage] || linkToExpectedPage[Object.keys(linkToExpectedPage).find(key =>
-      linkToExpectedPage[key].heading === expectedPage
+    const pageInfo = pagesUrlPath[expectedPage] || pagesUrlPath[Object.keys(pagesUrlPath).find(key =>
+      pagesUrlPath[key].heading === expectedPage
     ) || ''];
 
     if (pageInfo) {
-      await this.page.waitForLoadState('networkidle');
+      await this.page.waitForLoadState('domcontentloaded');
       if (expectedPage === 'Maintenance') {
         const passwordInput = this.page.locator('input[type="password"]');
-        const isPasswordDialogVisible = await passwordInput.isVisible().catch(() => false);
-        if (isPasswordDialogVisible) {
-          await expect(passwordInput).toBeVisible();
+        try {
+          await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
           await passwordInput.fill(testData.validCredentials.password);
-          const confirmButton = this.page.getByRole('button', { name: 'Confirm' });         
-          await confirmButton.click();         
+          const confirmButton = this.page.getByRole('button', { name: 'Confirm' });
+          await confirmButton.click();
+          await this.page.waitForURL(pageInfo.urlPattern);
+          await this.page.waitForLoadState('domcontentloaded');
+        } catch {
+          // Password dialog may not appear if already authenticated
         }
       }
       if (pageInfo.useUrlVerification) {
@@ -78,8 +70,8 @@ export class SidebarPage {
     await this.verifySearchCleanUp();
   }
 
-  async verifySearchCleanUp(){
-    expect(this.locators.searchInput).toBeEmpty();
+  async verifySearchCleanUp(): Promise<void> {
+    await expect(this.locators.searchInput).toBeEmpty();
   }
 
   async verifyLinkIsDisplayed(linkName: string): Promise<void> {
@@ -101,16 +93,13 @@ export class SidebarPage {
   }
 
   async verifyAllSidebarLinksVisible(): Promise<void> {
-    const expectedLinks = ['Admin', 'PIM', 'Leave', 'Time', 'Recruitment',
-                          'My Info', 'Performance', 'Dashboard', 'Directory',
-                          'Maintenance', 'Claim', 'Buzz'];
 
-    for (const linkName of expectedLinks) {
+    for (const linkName of this.expectedLinks) {
       await this.verifyLinkIsDisplayed(linkName);
     }
   }
 
   getExpectedPageInfo(linkName: string) {
-    return linkToExpectedPage[linkName];
+    return pagesUrlPath[linkName];
   }
 }

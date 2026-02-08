@@ -51,6 +51,7 @@ export class DashboardPage {
     await this.locators.userDropdownTrigger.click();
     await this.locators.logoutLink.waitFor({ state: 'visible' });
     await this.locators.logoutLink.click();
+    await this.page.waitForURL(/.*\/auth\/login$/);
   }
 
   async verifySuccessfulLogin(): Promise<void> {
@@ -60,13 +61,11 @@ export class DashboardPage {
     await this.verifyUserAuthenticated();
   }
 
-  // Widget verification methods for homePage feature scenarios
   async verifyWidgetVisible(widgetName: string, widgetType: WidgetType): Promise<void> {
     const actualWidgetName = widgetNameMap[widgetName] || widgetName;
     const widgetLocator = this.locators.widgetByName(actualWidgetName);
     await expect(widgetLocator).toBeVisible();
 
-    // For section type, also verify the inner panel is visible
     if (widgetType === 'section' && widgetName === 'Quick Launch') {
       await expect(this.locators.quickLaunchPanel).toBeVisible();
     }

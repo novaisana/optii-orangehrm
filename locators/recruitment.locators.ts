@@ -3,12 +3,10 @@ import { Page } from '@playwright/test';
 export class RecruitmentLocators {
   constructor(private page: Page) {}
 
-  // Page heading
   get pageHeading() {
     return this.page.getByRole('heading', { name: 'Recruitment' });
   }
 
-  // Candidates List Page Locators
   get addCandidateButton() {
     return this.page.getByRole('button', { name: 'Add' });
   }
@@ -37,7 +35,6 @@ export class RecruitmentLocators {
     return this.page.getByPlaceholder('Type for hints...');
   }
 
-  // Filter section dropdowns - using label text to find parent container, then dropdown
   get candidateNameFilterInput() {
     return this.filterSection.locator('.oxd-grid-item').filter({ hasText: 'Job Title' }).locator('.oxd-select-text');
   }
@@ -139,7 +136,6 @@ export class RecruitmentLocators {
   }
 
   getDeleteButton(candidateName: string) {
-    // Target the delete button (trash icon) in the actions cell
     return this.getCandidateRowByName(candidateName)
       .locator('.oxd-table-cell-actions button')
       .filter({ has: this.page.locator('i.oxd-icon-trash, i.bi-trash') })
@@ -182,8 +178,7 @@ export class RecruitmentLocators {
   get candidateHistoryHeading() {
     return this.page.getByRole('heading', { name: 'Candidate History' });
   }
-  // Candidate Profile section - input fields for verification
-  // Using OrangeHRM's .oxd-input-group structure with label text filtering
+ 
   get candidateEmailInput() {
     return this.page.locator('.oxd-input-group').filter({ hasText: /^Email/ }).locator('input');
   }

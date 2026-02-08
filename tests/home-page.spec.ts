@@ -1,4 +1,5 @@
-import { test, widgetTestData } from '../fixtures/homePage.fixture';
+import { test } from '../fixtures/login.fixture';
+import { widgetTestData } from '../enums/home-page.enum';
 
 test.describe('Feature: Home Page', { tag: ['@smoke', '@regression', '@homepage'] }, () => {
   test.describe('Verify user is directed to the home page when logged in', () => {

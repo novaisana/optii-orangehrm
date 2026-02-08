@@ -32,7 +32,8 @@ export class RecruitmentPage {
 
   async waitForCandidatesListPage(): Promise<void> {
     await this.page.waitForURL(this.listUrl);
-    await this.locators.pageHeading.waitFor({ state: 'visible' });
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.locators.pageHeading.waitFor({ state: 'visible', timeout: 15000 });
   }
 
   async waitForAddCandidatePage(): Promise<void> {
@@ -196,32 +197,24 @@ export class RecruitmentPage {
   }
 
   async verifyCandidateInformationPage(candidateData: CandidateData): Promise<void> {
-    // Verify page sections are visible
+
     await expect(this.locators.candidateApplicationStageHeading).toBeVisible();
     await expect(this.locators.candidateProfileHeading).toBeVisible();
     await expect(this.locators.candidateHistoryHeading).toBeVisible();
-
-    // Verify Application Stage section (display text)
     const expectedFullName = this.getCandidateFullName(candidateData);
     await expect(this.locators.candidateNameDisplay).toHaveText(expectedFullName);
     await expect(this.locators.candidateVacancyDisplay).toHaveText(candidateData.vacancy);
     await expect(this.locators.candidateStatusDisplay).toContainText('Status:');
     await expect(this.locators.candidateStatusDisplay).toContainText('Application Initiated');
-
-    // Verify Candidate Profile section (input field values)
     await expect(this.locators.candidateEmailInput).toHaveValue(candidateData.email);
     await expect(this.locators.candidateContactInput).toHaveValue(candidateData.contactNumber ?? '');
     await expect(this.locators.candidateKeywordsInput).toHaveValue(candidateData.keywords ?? '');
     await expect(this.locators.candidateNotesInput).toHaveValue(candidateData.notes ?? '');
   }
 
-  // Search methods
   async searchCandidateByName(name: string): Promise<void> {
-    //go to recruitment page to ensure search filters are visible
     await this.navigateToRecruitmentFromSidebar();
-    // Fill in the candidate name in the search input
     await this.locators.candidateNameInput.fill(name);
-    // Wait for autocomplete dropdown and select matching option
     const autocompleteOption = this.page.getByRole('option').first();
     try {
       await autocompleteOption.waitFor({ state: 'visible', timeout: 5000 });
@@ -232,11 +225,10 @@ export class RecruitmentPage {
         await autocompleteOption.click();
       }
     } catch {
-      // If no autocomplete, just continue with manual search
     }
 
     await this.locators.searchButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async verifyCandidateDisplayedInList(candidateName: string): Promise<void> {
@@ -248,13 +240,12 @@ export class RecruitmentPage {
     await this.locators.resetButton.click();
   }
 
-  // Delete candidate methods
   async deleteCandidate(candidateName: string): Promise<void> {
     const deleteButton = this.locators.getDeleteButton(candidateName);
     await deleteButton.click();
     await this.locators.confirmDeleteButton.waitFor({ state: 'visible' });
     await this.locators.confirmDeleteButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async verifySuccessMessage(): Promise<void> {
@@ -276,5 +267,18 @@ export class RecruitmentPage {
     parts.push(candidateData.lastName);
 
     return parts.join(' ');
+  }
+
+  async cleanupCandidate(candidate: CandidateData): Promise<void> {
+    const fullName = this.getCandidateFullName(candidate);
+    try {
+      await this.navigateToRecruitmentFromSidebar();
+      await this.searchCandidateByName(fullName);
+      await this.deleteCandidate(fullName);
+      await this.resetFilters();
+      console.log(`Cleaned up candidate: ${fullName}`);
+    } catch (error) {
+      console.warn(`Could not cleanup candidate ${fullName}:`, error);
+    }
   }
 }

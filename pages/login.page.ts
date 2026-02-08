@@ -3,7 +3,7 @@ import { LoginLocators } from '../locators/login.locators';
 
 export class LoginPage {
   private locators: LoginLocators;
-  private readonly url = 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/login';
+  private readonly url = process.env.BASE_URL!;
 
   constructor(private page: Page) {
     this.locators = new LoginLocators(page);
@@ -38,7 +38,6 @@ export class LoginPage {
   }
 
   async verifyErrorMessage(expectedMessage: string): Promise<void> {
-    // expect() has built-in auto-waiting, no need for explicit waitFor
     await expect(this.locators.errorMessage).toBeVisible();
     await expect(this.locators.errorMessage).toHaveText(expectedMessage);
   }

@@ -10,7 +10,9 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
-##allura
+##allure
 *.log
 *.tmp
-allura-results/
+/allure-results/
+/allure-report/
+/allure-history/

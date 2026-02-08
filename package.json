@@ -6,7 +6,18 @@
   "scripts": {
     "test": "npx playwright test",
     "test:env:test": "cross-env ENV=test npx playwright test",
-    "test:env:prod": "cross-env ENV=production npx playwright test"
+    "test:env:prod": "cross-env ENV=production npx playwright test",
+    "test:smoke": "npx playwright test --grep @smoke",
+    "test:regression": "npx playwright test --grep @regression",
+    "test:login": "npx playwright test --grep @login",
+    "test:homepage": "npx playwright test --grep @homepage",
+    "test:sidebar": "npx playwright test --grep @sidebar",
+    "test:recruitment": "npx playwright test --grep @recruitment",
+    "test:headed": "npx playwright test --headed",
+    "test:ui": "npx playwright test --ui",
+    "test:debug": "npx playwright test --debug",
+    "report:generate": "npx allure generate allure-results --clean -o allure-report",
+    "report:open": "npx allure open allure-report"
   },
   "repository": {
     "type": "git",
@@ -23,6 +34,7 @@
     "@faker-js/faker": "^10.3.0",
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.2.0",
+    "allure-commandline": "^2.29.0",
     "allure-playwright": "^3.4.5",
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.4"

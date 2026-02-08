@@ -1,6 +1,5 @@
 import { Page, expect } from '@playwright/test';
 import { RecruitmentLocators } from '../locators/recruitment.locators';
-import { exec } from 'node:child_process';
 
 export interface CandidateData {
   firstName: string;

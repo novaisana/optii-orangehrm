@@ -84,11 +84,11 @@ export class RecruitmentLocators {
   }
 
   get emailInput() {
-    return this.page.locator('input[placeholder="Type here"]').first();
+    return this.page.locator('.oxd-input-group').filter({ hasText: /^Email/ }).locator('input');
   }
 
   get contactNumberInput() {
-    return this.page.locator('input[placeholder="Type here"]').nth(1);
+    return this.page.locator('.oxd-input-group').filter({ hasText: /^Contact Number/ }).locator('input');
   }
 
   get vacancyDropdownForm() {
@@ -100,7 +100,7 @@ export class RecruitmentLocators {
   }
 
   get notesTextarea() {
-    return this.page.locator('textarea');
+    return this.page.locator('.oxd-input-group').filter({ hasText: /^Notes/ }).locator('textarea');
   }
 
   get consentCheckbox() {
@@ -151,15 +151,15 @@ export class RecruitmentLocators {
   }
 
   get candidateNameDisplay() {
-    return this.candidateInfoCard.locator('p').nth(0);
+    return this.candidateInfoCard.locator('.orangehrm-recruitment-card-profile-header p').first();
   }
 
   get candidateVacancyDisplay() {
-    return this.candidateInfoCard.locator('p').nth(1);
+    return this.candidateInfoCard.locator('.orangehrm-recruitment-card-profile-header p').nth(1);
   }
 
   get candidateHiringManagerDisplay() {
-    return this.candidateInfoCard.locator('p').nth(2);
+    return this.candidateInfoCard.locator('.orangehrm-recruitment-card-profile-header p').nth(2);
   }
   
 

@@ -1,15 +1,15 @@
-import { Page, expect } from '@playwright/test';
-import { DashboardLocators } from '../locators/dashboard.locators';
+import { Page, expect } from "@playwright/test";
+import { DashboardLocators } from "../locators/dashboard.locators";
 
-export type WidgetType = 'widget' | 'section';
+export type WidgetType = "widget" | "section";
 
 const widgetNameMap: Record<string, string> = {
-  'Time at Work': 'Time at Work',
-  'My Actions': 'My Actions',
-  'Quick Launch': 'Quick Launch',
-  'Buzz Latest Posts': 'Buzz Latest Posts',
-  'Employees on Leave Today': 'Employees on Leave Today',
-  'Employee Distribution by Sub Unit': 'Employee Distribution by Sub Unit'
+  "Time at Work": "Time at Work",
+  "My Actions": "My Actions",
+  "Quick Launch": "Quick Launch",
+  "Buzz Latest Posts": "Buzz Latest Posts",
+  "Employees on Leave Today": "Employees on Leave Today",
+  "Employee Distribution by Sub Unit": "Employee Distribution by Sub Unit",
 };
 
 export class DashboardPage {
@@ -22,7 +22,7 @@ export class DashboardPage {
 
   async waitForPageLoad(): Promise<void> {
     await this.page.waitForURL(this.expectedUrl);
-    await this.locators.dashboardHeading.waitFor({ state: 'visible' });
+    await this.locators.dashboardHeading.waitFor({ state: "visible" });
   }
 
   async verifyRedirectToDashboard(): Promise<void> {
@@ -31,7 +31,7 @@ export class DashboardPage {
 
   async verifyDashboardVisible(): Promise<void> {
     await expect(this.locators.dashboardHeading).toBeVisible();
-    await expect(this.locators.dashboardHeading).toHaveText('Dashboard');
+    await expect(this.locators.dashboardHeading).toHaveText("Dashboard");
   }
 
   async verifyUserAuthenticated(): Promise<void> {
@@ -49,7 +49,7 @@ export class DashboardPage {
 
   async clickLogoutButton(): Promise<void> {
     await this.locators.userDropdownTrigger.click();
-    await this.locators.logoutLink.waitFor({ state: 'visible' });
+    await this.locators.logoutLink.waitFor({ state: "visible" });
     await this.locators.logoutLink.click();
     await this.page.waitForURL(/.*\/auth\/login$/);
   }
@@ -61,12 +61,15 @@ export class DashboardPage {
     await this.verifyUserAuthenticated();
   }
 
-  async verifyWidgetVisible(widgetName: string, widgetType: WidgetType): Promise<void> {
+  async verifyWidgetVisible(
+    widgetName: string,
+    widgetType: WidgetType,
+  ): Promise<void> {
     const actualWidgetName = widgetNameMap[widgetName] || widgetName;
     const widgetLocator = this.locators.widgetByName(actualWidgetName);
     await expect(widgetLocator).toBeVisible();
 
-    if (widgetType === 'section' && widgetName === 'Quick Launch') {
+    if (widgetType === "section" && widgetName === "Quick Launch") {
       await expect(this.locators.quickLaunchPanel).toBeVisible();
     }
   }

@@ -9,53 +9,31 @@ on:
 
 jobs:
   test:
-    name: Run All Tests - Main
     timeout-minutes: 60
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v5
+    - uses: actions/setup-node@v5
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests on test environment
+      run: npm run test:env:test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-test
+        path: playwright-report/
+        retention-days: 30
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Run all Playwright tests
-        run: npx playwright test
-        continue-on-error: true
-        id: test-run
-
-      - name: Generate Allure Report
-        if: always()
-        run: npx allure generate allure-results --clean -o allure-report
-
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: allure-report-main-${{ github.run_number }}
-          path: allure-report/
-          retention-days: 30
-
-      - name: Upload Test Evidence (traces/screenshots)
-        uses: actions/upload-artifact@v4
-        if: failure() || steps.test-run.outcome == 'failure'
-        with:
-          name: test-evidence-main-${{ github.run_number }}
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 30
-
-      - name: Fail workflow if tests failed
-        if: steps.test-run.outcome == 'failure'
-        run: exit 1
+    - name: Run Playwright tests on production environment
+      run: npm run test:env:prod
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-prod
+        path: playwright-report/
+        retention-days: 30

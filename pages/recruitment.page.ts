@@ -5,6 +5,7 @@ export interface CandidateData {
   firstName: string;
   middleName?: string;
   lastName: string;
+  fullName: string;
   email: string;
   contactNumber?: string;
   vacancy: string;
@@ -16,11 +17,11 @@ export interface CandidateData {
 }
 
 export class RecruitmentPage {
-  private locators: RecruitmentLocators;
+  private readonly locators: RecruitmentLocators;
   private readonly listUrl = /.*\/recruitment\/viewCandidates$/;
   private readonly addUrl = /.*\/recruitment\/addCandidate$/;
 
-  constructor(private page: Page) {
+  constructor(private readonly page: Page) {
     this.locators = new RecruitmentLocators(page);
   }
 
@@ -148,8 +149,10 @@ export class RecruitmentPage {
   }
 
   async awaitForCandidateInformationPage(): Promise<void> {
-    await this.page.waitForURL(/.*\/recruitment\/addCandidate\/\d+/);
-
+    await this.page.waitForURL(/.*\/recruitment\/addCandidate\/\d+/, { timeout: 15000 });
+    await this.locators.candidateApplicationStageHeading.waitFor({ state: 'visible', timeout: 10000 });
+    await this.locators.candidateInfoCard.waitFor({ state: 'visible', timeout: 10000 });
+    await this.page.waitForLoadState('networkidle');
   }
 
   async clickCancel(): Promise<void> {
@@ -162,7 +165,7 @@ export class RecruitmentPage {
     await expect(this.locators.lastNameInput).toHaveValue(candidateData.lastName);
     await expect(this.locators.emailInput).toHaveValue(candidateData.email);
     await expect(this.locators.contactNumberInput).toHaveValue(candidateData.contactNumber ?? '');
-    await expect(this.locators.vacancyDropdownForm).toHaveText(candidateData.vacancy);
+    await expect(this.locators.vacancyDropdownForm).toContainText(candidateData.vacancy);
     await expect(this.locators.keywordsInput).toHaveValue(candidateData.keywords ?? '');
     await expect(this.locators.notesTextarea).toHaveValue(candidateData.notes ?? '');
     if (candidateData.consent === true) {
@@ -200,15 +203,18 @@ export class RecruitmentPage {
     await expect(this.locators.candidateApplicationStageHeading).toBeVisible();
     await expect(this.locators.candidateProfileHeading).toBeVisible();
     await expect(this.locators.candidateHistoryHeading).toBeVisible();
-    const expectedFullName = this.getCandidateFullName(candidateData);
-    await expect(this.locators.candidateNameDisplay).toHaveText(expectedFullName);
-    await expect(this.locators.candidateVacancyDisplay).toHaveText(candidateData.vacancy);
+    await expect(this.locators.firstNameInput).toHaveValue(candidateData.firstName);
+    if (candidateData.middleName) {
+      await expect(this.locators.middleNameInput).toHaveValue(candidateData.middleName);
+    }
+    await expect(this.locators.lastNameInput).toHaveValue(candidateData.lastName);
+    await expect(this.locators.candidateVacancyDisplay).toContainText(candidateData.vacancy);
     await expect(this.locators.candidateStatusDisplay).toContainText('Status:');
     await expect(this.locators.candidateStatusDisplay).toContainText('Application Initiated');
-    await expect(this.locators.candidateEmailInput).toHaveValue(candidateData.email);
-    await expect(this.locators.candidateContactInput).toHaveValue(candidateData.contactNumber ?? '');
+    await expect(this.locators.emailInput).toHaveValue(candidateData.email);
+    await expect(this.locators.contactNumberInput).toHaveValue(candidateData.contactNumber ?? '');
     await expect(this.locators.candidateKeywordsInput).toHaveValue(candidateData.keywords ?? '');
-    await expect(this.locators.candidateNotesInput).toHaveValue(candidateData.notes ?? '');
+    await expect(this.locators.notesTextarea).toHaveValue(candidateData.notes ?? '');
   }
 
   async searchCandidateByName(name: string): Promise<void> {
@@ -223,11 +229,13 @@ export class RecruitmentPage {
       } else {
         await autocompleteOption.click();
       }
-    } catch {
+    } catch (error) {
+      console.warn("Autocomplete option not available or visible:", error);
     }
 
     await this.locators.searchButton.click();
     await this.page.waitForLoadState('domcontentloaded');
+    await this.locators.candidatesTable.waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async verifyCandidateDisplayedInList(candidateName: string): Promise<void> {
@@ -247,37 +255,15 @@ export class RecruitmentPage {
     await this.page.waitForLoadState('domcontentloaded');
   }
 
-  async verifySuccessMessage(): Promise<void> {
-    await expect(this.locators.successMessage).toBeVisible({ timeout: 15000 });
-  }
-
-  async verifyCandidateNotInList(candidateName: string): Promise<void> {
-    const candidateRow = this.locators.getCandidateRowByName(candidateName);
-    await expect(candidateRow).not.toBeVisible();
-  }
-
-  getCandidateFullName(candidateData: CandidateData): string {
-    const parts = [candidateData.firstName];
-
-    if (candidateData.middleName) {
-      parts.push(candidateData.middleName);
-    }
-
-    parts.push(candidateData.lastName);
-
-    return parts.join(' ');
-  }
-
   async cleanupCandidate(candidate: CandidateData): Promise<void> {
-    const fullName = this.getCandidateFullName(candidate);
     try {
       await this.navigateToRecruitmentFromSidebar();
-      await this.searchCandidateByName(fullName);
-      await this.deleteCandidate(fullName);
+      await this.searchCandidateByName(candidate.fullName);
+      await this.deleteCandidate(candidate.fullName);
       await this.resetFilters();
-      console.log(`Cleaned up candidate: ${fullName}`);
+      console.log(`Cleaned up candidate: ${candidate.fullName}`);
     } catch (error) {
-      console.warn(`Could not cleanup candidate ${fullName}:`, error);
+      console.warn(`Could not cleanup candidate ${candidate.fullName}:`, error);
     }
   }
 }

@@ -1,11 +1,15 @@
-import { Page, expect } from '@playwright/test';
-import { LoginLocators } from '../locators/login.locators';
+import { Page, expect } from "@playwright/test";
+import { LoginLocators } from "../locators/login.locators";
+
+export const VALIDATION_MESSAGES = {
+  REQUIRED: "Required",
+} as const;
 
 export class LoginPage {
-  private locators: LoginLocators;
+  private readonly locators: LoginLocators;
   private readonly url = process.env.BASE_URL!;
 
-  constructor(private page: Page) {
+  constructor(private readonly page: Page) {
     this.locators = new LoginLocators(page);
   }
 
@@ -15,8 +19,8 @@ export class LoginPage {
   }
 
   async waitForPageLoad(): Promise<void> {
-    await this.locators.loginForm.waitFor({ state: 'visible' });
-    await this.locators.usernameInput.waitFor({ state: 'visible' });
+    await this.locators.loginForm.waitFor({ state: "visible" });
+    await this.locators.usernameInput.waitFor({ state: "visible" });
   }
 
   async enterUsername(username: string): Promise<void> {
@@ -40,6 +44,28 @@ export class LoginPage {
   async verifyErrorMessage(expectedMessage: string): Promise<void> {
     await expect(this.locators.errorMessage).toBeVisible();
     await expect(this.locators.errorMessage).toHaveText(expectedMessage);
+  }
+
+  async verifyFieldValidationError(
+    field: "username" | "password",
+    expectedMessage: string,
+  ): Promise<void> {
+    const locator =
+      field === "username"
+        ? this.locators.usernameValidationError
+        : this.locators.passwordValidationError;
+    await expect(locator).toBeVisible();
+    await expect(locator).toHaveText(expectedMessage);
+  }
+
+  async verifyFieldValidationErrorNotVisible(
+    field: "username" | "password",
+  ): Promise<void> {
+    const locator =
+      field === "username"
+        ? this.locators.usernameValidationError
+        : this.locators.passwordValidationError;
+    await expect(locator).not.toBeVisible();
   }
 
   async verifyLoginPageVisible(): Promise<void> {

@@ -1,110 +1,137 @@
-import { Page } from '@playwright/test';
+import { Page } from "@playwright/test";
 
 export class RecruitmentLocators {
-  constructor(private page: Page) {}
+  constructor(private readonly page: Page) {}
 
   get pageHeading() {
-    return this.page.getByRole('heading', { name: 'Recruitment' });
+    return this.page.getByRole("heading", { name: "Recruitment" });
   }
 
   get addCandidateButton() {
-    return this.page.getByRole('button', { name: 'Add' });
+    return this.page.getByRole("button", { name: "Add" });
   }
 
   get candidatesTable() {
-    return this.page.locator('.oxd-table');
+    return this.page.locator(".oxd-table");
   }
 
   get tableHeaders() {
-    return this.page.locator('.oxd-table-header-cell');
+    return this.page.locator(".oxd-table-header-cell");
   }
 
   get filterSection() {
-    return this.page.locator('.oxd-table-filter');
+    return this.page.locator(".oxd-table-filter");
   }
 
   get searchButton() {
-    return this.page.getByRole('button', { name: 'Search' });
+    return this.page.getByRole("button", { name: "Search" });
   }
 
   get resetButton() {
-    return this.page.getByRole('button', { name: 'Reset' });
+    return this.page.getByRole("button", { name: "Reset" });
   }
 
   get candidateNameInput() {
-    return this.page.getByPlaceholder('Type for hints...');
-  }
-
-  get candidateNameFilterInput() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: 'Job Title' }).locator('.oxd-select-text');
+    return this.page.getByPlaceholder("Type for hints...");
   }
 
   get jobTittle() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: 'Job Title' }).locator('.oxd-select-text');
+    return this.filterSection
+      .locator(".oxd-grid-item")
+      .filter({ hasText: "Job Title" })
+      .locator(".oxd-select-text");
   }
 
   get vacancy() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: /^Vacancy/ }).locator('.oxd-select-text');
+    return this.filterSection
+      .locator(".oxd-grid-item")
+      .filter({ hasText: /^Vacancy/ })
+      .locator(".oxd-select-text");
   }
 
   get hiringManager() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: 'Hiring Manager' }).locator('.oxd-select-text');
+    return this.filterSection
+      .locator(".oxd-grid-item")
+      .filter({ hasText: "Hiring Manager" })
+      .locator(".oxd-select-text");
   }
 
   get status() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: /^Status/ }).locator('.oxd-select-text');
+    return this.filterSection
+      .locator(".oxd-grid-item")
+      .filter({ hasText: /^Status/ })
+      .locator(".oxd-select-text");
   }
 
   get candidateKeywords() {
-    return this.filterSection.getByPlaceholder('Enter comma seperated words...');
+    return this.filterSection.getByPlaceholder(
+      "Enter comma seperated words...",
+    );
   }
 
   get dateOfApplication() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: 'Date of Application' });
+    return this.filterSection
+      .locator(".oxd-grid-item")
+      .filter({ hasText: "Date of Application" });
   }
 
   get methodApplication() {
-    return this.filterSection.locator('.oxd-grid-item').filter({ hasText: 'Method of Application' }).locator('.oxd-select-text');
+    return this.filterSection
+      .locator(".oxd-grid-item")
+      .filter({ hasText: "Method of Application" })
+      .locator(".oxd-select-text");
   }
 
   get addCandidateForm() {
-    return this.page.locator('form');
+    return this.page.locator("form");
   }
 
   get firstNameInput() {
-    return this.page.getByPlaceholder('First Name');
+    return this.page.getByPlaceholder("First Name");
   }
 
   get middleNameInput() {
-    return this.page.getByPlaceholder('Middle Name');
+    return this.page.getByPlaceholder("Middle Name");
   }
 
   get lastNameInput() {
-    return this.page.getByPlaceholder('Last Name');
+    return this.page.getByPlaceholder("Last Name");
   }
 
   get emailInput() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Email/ }).locator('input');
+    return this.page
+      .locator(".oxd-input-group")
+      .filter({ hasText: /^Email/ })
+      .locator("input");
   }
 
   get contactNumberInput() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Contact Number/ }).locator('input');
+    return this.page
+      .locator(".oxd-input-group")
+      .filter({ hasText: /^Contact Number/ })
+      .locator("input");
   }
 
   get vacancyDropdownForm() {
-    return this.page.locator('.oxd-select-text-input');
+    return this.page.locator(".oxd-select-text-input");
   }
 
   get keywordsInput() {
-    return this.page.getByPlaceholder('Enter comma seperated words...');
+    return this.page.getByPlaceholder("Enter comma seperated words...");
   }
 
   get notesTextarea() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Notes/ }).locator('textarea');
+    return this.page
+      .locator(".oxd-input-group")
+      .filter({ hasText: /^Notes/ })
+      .locator("textarea");
   }
 
   get consentCheckbox() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: 'Consent to keep data' }).locator('.oxd-checkbox-wrapper label');
+    return this.page
+      .locator(".oxd-input-group")
+      .filter({ hasText: "Consent to keep data" })
+      .locator(".oxd-checkbox-wrapper label");
   }
 
   get resumeFileInput() {
@@ -112,87 +139,77 @@ export class RecruitmentLocators {
   }
 
   get resumeUploadContainer() {
-    return this.page.locator('.oxd-file-input-div');
+    return this.page.locator(".oxd-file-input-div");
   }
 
   get dateOfApplicationInput() {
-    return this.page.getByPlaceholder('yyyy-dd-mm');
+    return this.page.getByPlaceholder("yyyy-dd-mm");
   }
 
   get saveButton() {
-    return this.page.getByRole('button', { name: 'Save', exact: true });
+    return this.page.getByRole("button", { name: "Save", exact: true });
   }
 
   get cancelButton() {
-    return this.page.getByRole('button', { name: 'Cancel' });
+    return this.page.getByRole("button", { name: "Cancel" });
   }
 
   get successMessage() {
-    return this.page.locator('.oxd-toast-content--success');
+    return this.page.locator(".oxd-toast-content--success");
   }
 
   getCandidateRowByName(name: string) {
-    return this.page.locator('.oxd-table-card').filter({ hasText: name });
+    return this.page.locator(".oxd-table-card").filter({ hasText: name });
   }
 
   getDeleteButton(candidateName: string) {
     return this.getCandidateRowByName(candidateName)
-      .locator('.oxd-table-cell-actions button')
-      .filter({ has: this.page.locator('i.oxd-icon-trash, i.bi-trash') })
+      .locator(".oxd-table-cell-actions button")
+      .filter({ has: this.page.locator("i.oxd-icon-trash, i.bi-trash") })
       .first();
   }
-  
+
   get confirmDeleteButton() {
-    return this.page.getByRole('button', { name: 'Yes, Delete' });
+    return this.page.getByRole("button", { name: "Yes, Delete" });
   }
 
   get candidateInfoCard() {
-    return this.page.locator('.orangehrm-card-container').first();
-  }
-
-  get candidateNameDisplay() {
-    return this.candidateInfoCard.locator('.orangehrm-recruitment-card-profile-header p').first();
+    return this.page.locator(".orangehrm-card-container").first();
   }
 
   get candidateVacancyDisplay() {
-    return this.candidateInfoCard.locator('.orangehrm-recruitment-card-profile-header p').nth(1);
+    return this.candidateInfoCard
+      .locator(".oxd-input-group")
+      .filter({ hasText: /^Vacancy/ })
+      .locator("p");
   }
 
   get candidateHiringManagerDisplay() {
-    return this.candidateInfoCard.locator('.orangehrm-recruitment-card-profile-header p').nth(2);
+    return this.candidateInfoCard
+      .locator(".oxd-input-group")
+      .filter({ hasText: /^Hiring Manager/ })
+      .locator("p");
   }
-  
 
   get candidateStatusDisplay() {
-    return this.candidateInfoCard.locator('p').filter({ hasText: 'Status:' });
+    return this.candidateInfoCard.locator("p").filter({ hasText: "Status:" });
   }
 
   get candidateApplicationStageHeading() {
-    return this.page.getByRole('heading', { name: 'Application Stage' });
+    return this.page.getByRole("heading", { name: "Application Stage" });
   }
 
   get candidateProfileHeading() {
-    return this.page.getByRole('heading', { name: 'Candidate Profile' });
+    return this.page.getByRole("heading", { name: "Candidate Profile" });
   }
 
   get candidateHistoryHeading() {
-    return this.page.getByRole('heading', { name: 'Candidate History' });
+    return this.page.getByRole("heading", { name: "Candidate History" });
   }
- 
-  get candidateEmailInput() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Email/ }).locator('input');
-  }
-
-  get candidateContactInput() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Contact Number/ }).locator('input');
-  }
-
   get candidateKeywordsInput() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Keywords/ }).locator('input');
+    return this.page
+      .locator(".oxd-input-group")
+      .filter({ hasText: /^Keywords/ })
+      .locator("input");
   }
-
-  get candidateNotesInput() {
-    return this.page.locator('.oxd-input-group').filter({ hasText: /^Notes/ }).locator('textarea');
-  }
-
 }

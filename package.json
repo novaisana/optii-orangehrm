@@ -16,8 +16,13 @@
     "test:headed": "npx playwright test --headed",
     "test:ui": "npx playwright test --ui",
     "test:debug": "npx playwright test --debug",
-    "report:generate": "npx allure generate allure-results --clean -o allure-report",
-    "report:open": "npx allure open allure-report"
+    "test:unit": "npx playwright test -c unit-tests",
+    "report:generate": "allure generate allure-results --clean -o allure-report",
+    "report:open": "npx allure open allure-report",
+    "report:serve": "allure serve allure-results",
+    "report:html": "npx playwright show-report",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -31,12 +36,18 @@
   },
   "homepage": "https://github.com/novaisana/optii-orangehrm#readme",
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@faker-js/faker": "^10.3.0",
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.2.0",
     "allure-commandline": "^2.29.0",
     "allure-playwright": "^3.4.5",
     "cross-env": "^10.1.0",
-    "dotenv": "^17.2.4"
+    "dotenv": "^17.2.4",
+    "eslint": "^9.39.2",
+    "globals": "^15.14.0",
+    "jiti": "^2.6.1",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.55.0"
   }
 }

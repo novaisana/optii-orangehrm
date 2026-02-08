@@ -1,7 +1,7 @@
-import { Page, expect } from '@playwright/test';
-import { SidebarLocators } from '../locators/side-bar.locators';
-import { testData } from '../fixtures/login.fixture';
-import { pagesUrlPath } from '../enums/side-bar.enum';
+import { Page, expect } from "@playwright/test";
+import { SidebarLocators } from "../locators/side-bar.locators";
+import { testData } from "../fixtures/login.fixture";
+import { pagesUrlPath } from "../enums/side-bar.enum";
 
 export class SidebarPage {
   private locators: SidebarLocators;
@@ -9,10 +9,20 @@ export class SidebarPage {
 
   constructor(private page: Page) {
     this.locators = new SidebarLocators(page);
-    this.expectedLinks = ['Admin', 'PIM', 'Leave', 'Time', 'Recruitment',
-                          'My Info', 'Performance', 'Dashboard', 'Directory',
-                          'Maintenance', 'Claim', 'Buzz'];
-
+    this.expectedLinks = [
+      "Admin",
+      "PIM",
+      "Leave",
+      "Time",
+      "Recruitment",
+      "My Info",
+      "Performance",
+      "Dashboard",
+      "Directory",
+      "Maintenance",
+      "Claim",
+      "Buzz",
+    ];
   }
 
   async verifySidebarIsVisible(): Promise<void> {
@@ -27,28 +37,35 @@ export class SidebarPage {
   }
 
   async verifyPageLoadedCorrectly(expectedPage: string): Promise<void> {
-
-    const pageInfo = pagesUrlPath[expectedPage] || pagesUrlPath[Object.keys(pagesUrlPath).find(key =>
-      pagesUrlPath[key].heading === expectedPage
-    ) || ''];
+    const pageInfo =
+      pagesUrlPath[expectedPage] ||
+      pagesUrlPath[
+        Object.keys(pagesUrlPath).find(
+          (key) => pagesUrlPath[key].heading === expectedPage,
+        ) || ""
+      ];
 
     if (pageInfo) {
-      await this.page.waitForLoadState('domcontentloaded');
-      if (expectedPage === 'Maintenance') {
+      await this.page.waitForLoadState("domcontentloaded");
+      if (expectedPage === "Maintenance") {
         const passwordInput = this.page.locator('input[type="password"]');
         try {
-          await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
+          await passwordInput.waitFor({ state: "visible", timeout: 5000 });
           await passwordInput.fill(testData.validCredentials.password);
-          const confirmButton = this.page.getByRole('button', { name: 'Confirm' });
+          const confirmButton = this.page.getByRole("button", {
+            name: "Confirm",
+          });
           await confirmButton.click();
           await this.page.waitForURL(pageInfo.urlPattern);
-          await this.page.waitForLoadState('domcontentloaded');
+          await this.page.waitForLoadState("domcontentloaded");
         } catch {
           // Password dialog may not appear if already authenticated
         }
       }
       if (pageInfo.useUrlVerification) {
-        await expect(this.page).toHaveURL(pageInfo.urlPattern, { timeout: 10000 });
+        await expect(this.page).toHaveURL(pageInfo.urlPattern, {
+          timeout: 10000,
+        });
         return;
       }
       const heading = this.locators.getPageHeading(pageInfo.heading);
@@ -89,11 +106,9 @@ export class SidebarPage {
     await expect(this.locators.getSidebarLink(searchText)).toBeVisible();
     await this.verifyLinkIsDisplayed(searchText);
     await expect(this.locators.allMenuItems).toHaveCount(1);
-    
   }
 
   async verifyAllSidebarLinksVisible(): Promise<void> {
-
     for (const linkName of this.expectedLinks) {
       await this.verifyLinkIsDisplayed(linkName);
     }

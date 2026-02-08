@@ -25,7 +25,7 @@ export class CleanupRegistry {
         await cleanup();
       } catch (error) {
         errors.push(error as Error);
-        console.warn('Cleanup failed:', error);
+        console.warn("Cleanup failed:", error);
       }
     }
 

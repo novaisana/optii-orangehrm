@@ -1,6 +1,17 @@
 import { Page, expect } from '@playwright/test';
 import { DashboardLocators } from '../locators/dashboard.locators';
 
+export type WidgetType = 'widget' | 'section';
+
+const widgetNameMap: Record<string, string> = {
+  'Time at Work': 'Time at Work',
+  'My Actions': 'My Actions',
+  'Quick Launch': 'Quick Launch',
+  'Buzz Latest Posts': 'Buzz Latest Posts',
+  'Employees on Leave Today': 'Employees on Leave Today',
+  'Employee Distribution by Sub Unit': 'Employee Distribution by Sub Unit'
+};
+
 export class DashboardPage {
   private locators: DashboardLocators;
   private readonly expectedUrl = /.*\/dashboard\/index$/;
@@ -27,12 +38,13 @@ export class DashboardPage {
     await expect(this.locators.userDropdown).toBeVisible();
   }
 
-  async getDashboardHeading(): Promise<string> {
-    return await this.locators.dashboardHeading.textContent() || '';
+  async verifySidebarVisible(): Promise<void> {
+    await expect(this.locators.sidebarNavigation).toBeVisible();
   }
 
-  async verifySidebarNavigationAccessible(): Promise<void> {
-    await expect(this.locators.sidebarNavigation).toBeVisible();
+  async verifyDashboardWidgetsVisible(): Promise<void> {
+    await expect(this.locators.dashboardWidgetsContainer).toBeVisible();
+    await expect(this.locators.timeAtWorkWidget).toBeVisible();
   }
 
   async clickLogoutButton(): Promise<void> {
@@ -41,14 +53,22 @@ export class DashboardPage {
     await this.locators.logoutLink.click();
   }
 
-  async logout(): Promise<void> {
-    await this.clickLogoutButton();
-  }
-
   async verifySuccessfulLogin(): Promise<void> {
     await this.waitForPageLoad();
     await this.verifyRedirectToDashboard();
     await this.verifyDashboardVisible();
     await this.verifyUserAuthenticated();
+  }
+
+  // Widget verification methods for homePage feature scenarios
+  async verifyWidgetVisible(widgetName: string, widgetType: WidgetType): Promise<void> {
+    const actualWidgetName = widgetNameMap[widgetName] || widgetName;
+    const widgetLocator = this.locators.widgetByName(actualWidgetName);
+    await expect(widgetLocator).toBeVisible();
+
+    // For section type, also verify the inner panel is visible
+    if (widgetType === 'section' && widgetName === 'Quick Launch') {
+      await expect(this.locators.quickLaunchPanel).toBeVisible();
+    }
   }
 }

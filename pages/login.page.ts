@@ -37,11 +37,6 @@ export class LoginPage {
     await this.clickLoginButton();
   }
 
-  async getErrorMessage(): Promise<string> {
-    await this.locators.errorMessage.waitFor({ state: 'visible' });
-    return await this.locators.errorMessage.textContent() || '';
-  }
-
   async verifyErrorMessage(expectedMessage: string): Promise<void> {
     // expect() has built-in auto-waiting, no need for explicit waitFor
     await expect(this.locators.errorMessage).toBeVisible();

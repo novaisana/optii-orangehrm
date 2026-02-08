@@ -1,10 +1,10 @@
 import { test } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
 import { DashboardPage } from '../pages/dashboard.page';
-import { testData } from '../fixtures/testData.fixture';
+import { testData } from '../fixtures/login.fixture';
 
 
-test.describe('Feature: Login', () => {
+test.describe('Feature: Login', { tag: ['@smoke', '@regression', '@login'] }, () => {
   let loginPage: LoginPage;
   let dashboardPage: DashboardPage;
 
@@ -32,7 +32,6 @@ test.describe('Feature: Login', () => {
   test('Verify if user can logout successfully', async () => {
     await loginPage.login(testData.validCredentials.username, testData.validCredentials.password);
     await dashboardPage.verifySuccessfulLogin();
-    await dashboardPage.verifySidebarNavigationAccessible();
     await dashboardPage.clickLogoutButton();
     await loginPage.verifyLoginPageVisible();
   });

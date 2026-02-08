@@ -3,7 +3,7 @@ on:
   push:
     branches: [ 'feature/**' ]
   pull_request:
-    branches: [ Test, main ]
+    branches: [ main ]
   schedule:
   - cron: '59 23 * * 0'
 

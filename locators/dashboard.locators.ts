@@ -1,15 +1,10 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class DashboardLocators {
   constructor(private page: Page) {}
 
-
   get dashboardHeading() {
     return this.page.getByRole('heading', { name: 'Dashboard' });
-  }
-
-  get dashboardContainer() {
-    return this.page.locator('.oxd-dashboard');
   }
 
   get userDropdown() {
@@ -28,11 +23,24 @@ export class DashboardLocators {
     return this.page.locator('.oxd-sidepanel');
   }
 
+  get dashboardWidgetsContainer() {
+    return this.page.locator('.oxd-layout-context');
+  }
+
+  // Widget locators using oxd-sheet class for specificity (avoids matching grid-items)
+  get timeAtWorkWidget() {
+    return this.page.locator('.oxd-sheet.orangehrm-dashboard-widget').filter({
+      has: this.page.locator('.orangehrm-dashboard-widget-name', { hasText: 'Time at Work' })
+    });
+  }
+
   get quickLaunchPanel() {
     return this.page.locator('.orangehrm-quick-launch');
   }
 
-  get timeAtWorkWidget() {
-    return this.page.locator('.oxd-sheet').filter({ hasText: 'Time at Work' });
+  widgetByName(widgetName: string): Locator {
+    return this.page.locator('.oxd-sheet.orangehrm-dashboard-widget').filter({
+      has: this.page.locator('.orangehrm-dashboard-widget-name', { hasText: widgetName })
+    });
   }
 }

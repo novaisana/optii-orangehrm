@@ -1,3 +1,6 @@
+##local settings
+.claude/
+.vscode/
 
 # Playwright
 node_modules/
@@ -6,3 +9,11 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+.playwright-mcp/
+
+##allure
+*.log
+*.tmp
+/allure-results/
+/allure-report/
+/allure-history/
